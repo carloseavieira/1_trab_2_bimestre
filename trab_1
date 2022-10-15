@@ -1,0 +1,136 @@
+package br.edu.univille;
+
+import br.edu.univille.factory.ConnectionFactory;
+
+package br.edu.univille.dao;
+
+public class ListaDao {
+}
+
+package br.edu.univille.factory;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Objects;
+
+public class ConnectionFactory {
+
+
+    private static ConnectionFactory instance;
+    private Connection connection;
+    private String url = PropertiesUtils.getUrlByProp();
+
+    private ConnectionFactory() throws SQLException {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            this.connection = DriverManager.getConnection(url);
+        } catch (ClassNotFoundException e) {
+            System.out.println("Falha ao conectar ao banco de dados: " + e.getMessage());
+        }
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public static ConnectionFactory getInstance() throws SQLException {
+        if (Objects.isNull(instance) || instance.getConnection().isClosed()) {
+            instance = new ConnectionFactory();
+        }
+
+        return instance;
+    }
+}
+
+package br.edu.univille.model;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+public class Lista {
+
+    private int id;
+    private String nome;
+    private final Date dataCriacao = new Date();
+    private Date dataExclusao;
+    private boolean excluida;
+    private ArrayList<Tarefa> tarefas;
+
+    private Lista() {}
+
+    public Lista(int id, String nome, Date dataExclusao, boolean excluida) {
+        this.id = id;
+        this.nome = nome;
+        this.dataExclusao = dataExclusao;
+        this.excluida = excluida;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Date getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public Date getDataExclusao() {
+        return dataExclusao;
+    }
+
+    public void setDataExclusao(Date dataExclusao) {
+        this.dataExclusao = dataExclusao;
+    }
+
+    public boolean isExcluida() {
+        return excluida;
+    }
+
+    public void setExcluida(boolean excluida) {
+        this.excluida = excluida;
+    }
+
+    public ArrayList<Tarefa> getTarefas() {
+        return tarefas;
+    }
+
+    public void setTarefas(ArrayList<Tarefa> tarefas) {
+        this.tarefas = tarefas;
+    }
+}
+ 
+package br.edu.univille.model;
+
+import java.util.Date;
+
+public class Tarefa {
+
+    private int id;
+    private String titulo;
+    private String texto;
+    private final Date dataCriacao = new Date();
+    private Date dataConclusao;
+    private boolean concluida;
+    private Lista lista;
+
+    private Tarefa() {}
+
+    public Tarefa(int id, String titulo, String texto, Lista lista) {
+        this.id = id;
+        this.titulo = titulo;
+        this.texto = texto;
+        this.lista = lista;
+    }
+}
